@@ -1,36 +1,29 @@
 # clj-tictactoe
 
-FIXME: description
+A simple tictactoe program
 
 ## Installation
 
-Download from http://example.com/FIXME.
+```
+$ git clone https://github.com/timothyhahn/clj-tictactoe.git
+
+$ cd clj-tictactoe/
+
+$ lein deps
+
+$ lein compile
+```
 
 ## Usage
 
-FIXME: explanation
+You can run clj-tictactoe's jar with:
 
-    $ java -jar clj-tictactoe-0.1.0-standalone.jar [args]
-
-## Options
-
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
+```
+$ java -jar clj-tictactoe-0.1.0-standalone.jar
+```
 
 ## License
 
-Copyright © 2013 FIXME
+Copyright © 2013 Timothy Hahn
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+Distributed under the Eclipse Public License version 1.0 
