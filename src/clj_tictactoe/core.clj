@@ -123,31 +123,50 @@
     "o"
     "x"))
 
+(defn generate-move [board]
+  (let [found (atom false) move (atom nil)]
+    (while (not @found)
+      (swap! move (fn [_] (rand-int (count board))))
+      (if (free? board @move)
+        (do
+          (swap! found not)))) @move))
+
 (defn run-console []
   (println "Welcome to Clojure Tic Tac Toe")
-    (let [board (atom (make-board)) player (atom "x")]
-      (while (and
-               (= (winner-of @board) nil)
-               (any-free? @board)) 
-        (print-board @board)
-        (println "Player" @player)
-        (println "Input Move(1-9):")
-        (try 
-          (let [move (dec(Integer/parseInt (read-line)))]
-            (if (and
-              (>= move 0)
-              (<= move 8)
-              (free? @board move))
-                (do (swap! board apply-move move @player)
-                 (swap! player other-player))
-                (println "Please input a valid move")))
-          (catch NumberFormatException nfe (println "Please use a number to indicate your move"))))
+    (println "Play with AI?(y/N)")
+      (let [ai (if (= "y" (read-line)) true false)]
+        (let [board (atom (make-board)) player (atom "x")]
+          (while (and
+                   (= (winner-of @board) nil)
+                   (any-free? @board)) 
+            (print-board @board)
+              (if (or
+                    (= @player "x")
+                    (= ai false))
+                (do
+                  (println "Player" @player)
+                  (println "Input Move(1-9):")
+                  (try 
+                    (let [move (dec(Integer/parseInt (read-line)))]
+                      (if (and
+                        (>= move 0)
+                        (<= move 8)
+                        (free? @board move))
+                          (do 
+                            (swap! board apply-move move @player)
+                            (swap! player other-player))
+                          (println "Please input a valid move")))
+                    (catch NumberFormatException nfe (println "Please use a number to indicate your move"))))
+                 (do 
+                   (println "AI is making a move")
+                   (swap! board apply-move (generate-move @board) @player)
+                   (swap! player other-player))))
    
-        (print-board @board)
-        (let [winner (winner-of @board)]
-          (if winner
-            (println "Congrats to winner" winner)
-            (println "No one wins")))))
+            (print-board @board)
+            (let [winner (winner-of @board)]
+              (if winner
+                (println "Congrats to winner" winner)
+                (println "No one wins"))))))
 
 (defn -main
   "Main class"
