@@ -19,7 +19,7 @@ $ lein compile
 You can run clj-tictactoe's jar with:
 
 ```
-$ java -jar clj-tictactoe-1.0.1-standalone.jar
+$ java -jar clj-tictactoe-1.1.0-standalone.jar
 ```
 
 ## License
