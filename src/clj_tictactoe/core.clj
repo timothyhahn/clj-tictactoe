@@ -1,5 +1,5 @@
 (ns clj-tictactoe.core
-  (:gen-class))
+  (:gen-class :main true))
 
 (defn make-board []
   "Returns an empty board"
@@ -123,30 +123,35 @@
     "o"
     "x"))
 
+(defn run-console []
+  (println "Welcome to Clojure Tic Tac Toe")
+    (let [board (atom (make-board)) player (atom "x")]
+      (while (and
+               (= (winner-of @board) nil)
+               (any-free? @board)) 
+        (print-board @board)
+        (println "Player" @player)
+        (println "Input Move(1-9):")
+        (try 
+          (let [move (dec(Integer/parseInt (read-line)))]
+            (if (and
+              (>= move 0)
+              (<= move 8)
+              (free? @board move))
+                (do (swap! board apply-move move @player)
+                 (swap! player other-player))
+                (println "Please input a valid move")))
+          (catch NumberFormatException nfe (println "Please use a number to indicate your move"))))
+   
+        (print-board @board)
+        (let [winner (winner-of @board)]
+          (if winner
+            (println "Congrats to winner" winner)
+            (println "No one wins")))))
+
 (defn -main
   "Main class"
   [& args]
-  (println "Welcome to Clojure Tic Tac Toe")
-  (let [board (atom (make-board)) player (atom "x")]
-    (while (and
-             (= (winner-of @board) nil)
-             (any-free? @board)) 
-      (print-board @board)
-      (println "Player" @player)
-      (println "Input Move(1-9):")
-      (try 
-        (let [move (dec(Integer/parseInt (read-line)))]
-          (if (and
-            (>= move 0)
-            (<= move 8)
-            (free? @board move))
-              (do (swap! board apply-move move @player)
-               (swap! player other-player))
-              (println "Please input a valid move")))
-        (catch NumberFormatException nfe (println "Please use a number to indicate your move"))))
- 
-      (print-board @board)
-      (let [winner (winner-of @board)]
-        (if winner
-          (println "Congrats to winner" winner)
-          (println "No one wins")))))
+  (cond
+       (= "console" (first args)) (run-console)
+       true (run-console)))
