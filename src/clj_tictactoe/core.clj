@@ -32,11 +32,77 @@
         (recur (inc n))))))
   
 (defn is-winner? [board player]
-  false)
+  (let [top (subvec board 0 3)
+        mid (subvec board 3 6)
+        bot (subvec board 6 9)
+        ;rows [top mid bot]
+        won (atom false)]
+    ;; Horizontal win
+    ;; TODO: Can't get for loop working inside this function
+      (if (=
+           player
+           (first top)
+           (second top)
+           (last top))
+        (swap! won (fn [_] true)))
+      (if (=
+           player
+           (first mid)
+           (second mid)
+           (last mid))
+        (swap! won (fn [_] true)))
+      (if (=
+           player
+           (first bot)
+           (second bot)
+           (last bot))
+        (swap! won (fn [_] true)))
+
+    ;; Vertical win
+    (if (=
+           player
+           (first top)
+           (first mid)
+           (first bot))
+        (swap! won (fn [_] true)))
+      (if (=
+           player
+           (second top)
+           (second mid)
+           (second bot))
+        (swap! won (fn [_] true)))
+      (if (=
+           player
+           (last top)
+           (last mid)
+           (last bot))
+        (swap! won (fn [_] true)))
+
+  ;; Descending Diagonal win
+  (if (=
+     player
+     (first top)
+     (second mid)
+     (last bot))
+    (swap! won (fn [_] true)))
+
+  ;; Ascendng Diagonal win
+  (if (=
+      player
+      (last top)
+      (second mid)
+      (first bot))
+    (swap! won (fn [_] true)))
+
+  @won))
 
 (defn winner-of [board]
   "Returns either the character of the winner or nil if no winner"
-  nil)
+  (if (is-winner? board "x")
+    "x"
+    (if (is-winner? board "o")
+    "o"
+    nil)))
 
 (defn free? [board n]
   "Returns whether or not the member on the board is equal to an empty character"
@@ -63,8 +129,8 @@
   (println "Welcome to Clojure Tic Tac Toe")
   (let [board (atom (make-board)) player (atom "x")]
     (while (and
-             (any-free? @board)
-             (= (winner-of @board) nil))
+             (= (winner-of @board) nil)
+             (any-free? @board)) 
       (print-board @board)
       (println "Player" @player)
       (println "Input Move(1-9):")
@@ -80,7 +146,7 @@
         (catch NumberFormatException nfe (println "Please use a number to indicate your move"))))
  
       (print-board @board)
-      (let [winner (winner-of board)]
+      (let [winner (winner-of @board)]
         (if winner
           (println "Congrats to winner" winner)
           (println "No one wins")))))

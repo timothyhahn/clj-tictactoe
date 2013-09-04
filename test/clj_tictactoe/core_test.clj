@@ -14,12 +14,12 @@
 ")
 
 (def test-board
-  ["x" "x" "o" " " "x" " " "o" "o" "x"])
+  ["x" "x" "o" " " "o" " " "o" "o" "x"])
 
 (def test-board-str
 "x|x|o
 -----
- |x| 
+ |o| 
 -----
 o|o|x
 ")
@@ -38,13 +38,21 @@ o|o|x
     (is (= (is-winner? empty-board "o") false)))
 
   (testing "The winner is properly returned"
-    (is (= (winner-of empty-board) nil))))
+    (is (= (winner-of empty-board) nil))
+    (is (= (winner-of test-board) "o"))
+    (is (= (winner-of full-board) "x"))
+    (is (= (winner-of ["x" "x" "x" " " " " " " " " " " " "]) "x"))
+    (is (= (winner-of [" " " " " " "o" "o" "o" " " " " " "]) "o"))
+    (is (= (winner-of [" " " " " " "x" "o" "x" "o" "o" "o"]) "o"))
+    (is (= (winner-of ["x" " " " " "x" " " " " "x" " " " "]) "x"))
+    (is (= (winner-of [" " "o" " " " " "o" " " " " "o" " "]) "o"))
+    (is (= (winner-of [" " "x" "o" " " " " "o" " " "x" "o"]) "o"))))
 
 (deftest apply-move-test
   (testing "Whether applying a move works"
     (is (= (apply-move empty-board 0 "x") ["x" " " " " " " " " " " " " " " " "]))
     (is (= (apply-move test-board 0 "x") test-board))
-    (is (= (apply-move test-board 3 "x") ["x" "x" "o" "x" "x" " " "o" "o" "x"]))
+    (is (= (apply-move test-board 3 "x") ["x" "x" "o" "x" "o" " " "o" "o" "x"]))
     (is (= (apply-move full-board 0 "x") full-board))))
 
 (deftest freeness-test
