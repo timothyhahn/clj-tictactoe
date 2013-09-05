@@ -21,8 +21,7 @@
     (apply str @rows)))
 
 (defn print-board [board]
-  "Prints the board in it's current state.
-  SIDE EFFECTS: Prints to console"
+  "Prints the board in it's current state."
   (do
     (loop [n 0]
       (when (< n 3)
@@ -30,7 +29,7 @@
         (if (< n 2)
           (println (limit-str)))
         (recur (inc n))))))
-  
+
 (defn is-winner? [board player]
   (let [top (subvec board 0 3)
         mid (subvec board 3 6)
@@ -112,24 +111,47 @@
   "True if there is a free spot on the board, otherwise nil"
   (some #(= " " %) board))
 
-(defn apply-move [board n player]
-  "Returns a board with the move performed if possible"
-  (if (free? board n)
-      (assoc board n player)
-      board))
+(defn space-free? [n]
+    (= " " n))
+
+;; From http://stackoverflow.com/questions/8641305/find-index-of-an-element-matching-a-predicate-in-clojure
+(defn indices [pred coll]
+     (keep-indexed #(when (pred %2) %1) coll))
 
 (defn other-player [player]
   (if (= player "x")
     "o"
     "x"))
 
-(defn generate-move [board]
-  (let [found (atom false) move (atom nil)]
-    (while (not @found)
-      (swap! move (fn [_] (rand-int (count board))))
-      (if (free? board @move)
-        (do
-          (swap! found not)))) @move))
+(defn apply-move [board move player]
+  "Returns a board with the move performed if possible"
+  (if (free? board move)
+      (assoc board move player)
+      board))
+
+(defn utility [board player move]
+  (let [new-board (apply-move board move player)]
+      (if (is-winner? new-board player)
+        1
+        (if (is-winner? new-board (other-player player))
+          -1
+          0))))
+
+(defn generate-rules [board]
+  (indices space-free? board))
+
+(defn calculate-utilities [board player rules]
+  (let [n (count rules)]
+    (apply map utility [(take n (repeat board)) (take n (repeat player)) rules])))
+
+(defn winning-moves [utilities]
+  (indices (fn [n] (= n 1)) utilities))
+
+(defn generate-move [board player]
+  (let [rules (generate-rules board) utilities (calculate-utilities board player rules)]
+    (if (empty? (winning-moves utilities))
+      (rand-nth (generate-rules board))
+      (nth rules (rand-nth (winning-moves utilities))))))
 
 (defn run-console []
   (println "Welcome to Clojure Tic Tac Toe")
@@ -159,7 +181,7 @@
                     (catch NumberFormatException nfe (println "Please use a number to indicate your move"))))
                  (do 
                    (println "AI is making a move")
-                   (swap! board apply-move (generate-move @board) @player)
+                   (swap! board apply-move (generate-move @board @player) @player)
                    (swap! player other-player))))
    
             (print-board @board)
