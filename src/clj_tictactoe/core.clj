@@ -31,67 +31,47 @@
         (recur (inc n))))))
 
 (defn is-winner? [board player]
-  (let [top (subvec board 0 3)
-        mid (subvec board 3 6)
-        bot (subvec board 6 9)
-        ;rows [top mid bot]
-        won (atom false)]
-    ;; Horizontal win
-    ;; TODO: Can't get for loop working inside this function
-      (if (=
-           player
-           (first top)
-           (second top)
-           (last top))
-        (swap! won (fn [_] true)))
-      (if (=
-           player
-           (first mid)
-           (second mid)
-           (last mid))
-        (swap! won (fn [_] true)))
-      (if (=
-           player
-           (first bot)
-           (second bot)
-           (last bot))
+  (let [won (atom false)]
+    ;;; Horizontal win
+    ;; Check if there are any rows
+    ;; where all of the elements
+    ;; match the player element
+    (if 
+      (some true? (map #(every? #{player} %) 
+                  (partition 3 board)))
         (swap! won (fn [_] true)))
 
-    ;; Vertical win
-    (if (=
-           player
-           (first top)
-           (first mid)
-           (first bot))
-        (swap! won (fn [_] true)))
-      (if (=
-           player
-           (second top)
-           (second mid)
-           (second bot))
-        (swap! won (fn [_] true)))
-      (if (=
-           player
-           (last top)
-           (last mid)
-           (last bot))
+    ;;; Vertical Win
+    ;; Check if there is a column
+    ;; where all of the elements 
+    ;; match the player element
+    (if 
+      (some true? (map #(every? #{player} %) 
+                  (letfn [(column [b] (take-nth 3 b))] 
+                    (list (column board) 
+                          (column (rest board)) 
+                          (column (rest (rest board)))))))
         (swap! won (fn [_] true)))
 
-  ;; Descending Diagonal win
-  (if (=
-     player
-     (first top)
-     (second mid)
-     (last bot))
-    (swap! won (fn [_] true)))
+    (let
+        [top (subvec board 0 3)
+         mid (subvec board 3 6)
+         bot (subvec board 6 9)]
+      ;; Descending Diagonal win
+      (if (=
+         player
+         (first top)
+         (second mid)
+         (last bot))
+        (swap! won (fn [_] true)))
 
-  ;; Ascendng Diagonal win
-  (if (=
-      player
-      (last top)
-      (second mid)
-      (first bot))
-    (swap! won (fn [_] true)))
+      ;; Ascendng Diagonal win
+      (if (=
+          player
+          (last top)
+          (second mid)
+          (first bot))
+        (swap! won (fn [_] true))))
 
   @won))
 
