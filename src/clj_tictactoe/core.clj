@@ -31,49 +31,40 @@
         (recur (inc n))))))
 
 (defn is-winner? [board player]
-  (let [won (atom false)]
-    ;;; Horizontal win
-    ;; Check if there are any rows
-    ;; where all of the elements
-    ;; match the player element
-    (if 
+  (let
+    [top (subvec board 0 3)
+     mid (subvec board 3 6)
+     bot (subvec board 6 9)]
+    (or
+      ;;; Horizontal win
+      ;; Check if there are any rows
+      ;; where all of the elements
+      ;; match the player element
       (some true? (map #(every? #{player} %) 
-                  (partition 3 board)))
-        (swap! won (fn [_] true)))
+                    (partition 3 board)))
 
-    ;;; Vertical Win
-    ;; Check if there is a column
-    ;; where all of the elements 
-    ;; match the player element
-    (if 
+      ;;; Vertical Win
+      ;; Check if there is a column
+      ;; where all of the elements 
+      ;; match the player element
       (some true? (map #(every? #{player} %) 
-                  (letfn [(column [b] (take-nth 3 b))] 
-                    (list (column board) 
-                          (column (rest board)) 
-                          (column (rest (rest board)))))))
-        (swap! won (fn [_] true)))
+                    (letfn [(column [b] (take-nth 3 b))] 
+                      (list (column board) 
+                            (column (rest board)) 
+                            (column (rest (rest board)))))))
 
-    (let
-        [top (subvec board 0 3)
-         mid (subvec board 3 6)
-         bot (subvec board 6 9)]
       ;; Descending Diagonal win
-      (if (=
+      (=
          player
          (first top)
          (second mid)
          (last bot))
-        (swap! won (fn [_] true)))
-
       ;; Ascendng Diagonal win
-      (if (=
+      (=
           player
           (last top)
           (second mid)
-          (first bot))
-        (swap! won (fn [_] true))))
-
-  @won))
+          (first bot)))))
 
 (defn winner-of [board]
   "Returns either the character of the winner or nil if no winner"
