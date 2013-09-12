@@ -21,7 +21,7 @@ $ lein compile
 You can run clj-tictactoe's jar with:
 
 ```
-$ java -jar clj-tictactoe-1.2.0-standalone.jar
+$ java -jar clj-tictactoe-1.2.1-standalone.jar
 ```
 
 ## Changelog

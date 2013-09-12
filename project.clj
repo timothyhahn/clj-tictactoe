@@ -1,4 +1,4 @@
-(defproject clj-tictactoe "1.2.0-SNAPSHOT"
+(defproject clj-tictactoe "1.2.1-SNAPSHOT"
   :description "A simple tictactoe program"
   :url "http://github.com/timothyhahn/clj-tictactoe"
   :license {:name "Eclipse Public License"
