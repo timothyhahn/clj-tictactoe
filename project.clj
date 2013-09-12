@@ -6,5 +6,5 @@
   :dependencies [[org.clojure/clojure "1.5.1"]
                 [org.clojure/tools.nrepl "0.2.3"]]
 
-  :main clj-tictactoe.core
+  :main clj-tictactoe.runner
   :profiles {:uberjar {:aot :all}})
